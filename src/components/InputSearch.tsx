@@ -1,11 +1,11 @@
 import React from 'react';
-import { Container, Button, Input, InputRightElement, InputGroup } from '@chakra-ui/react'
+import { Container, Button, Input, InputRightElement, InputGroup, ButtonProps } from '@chakra-ui/react'
 
-interface Props {
+interface Props extends ButtonProps {
   onClick: () => void;
 }
 
-export default function InputSearch({onClick}: Props)  {
+export default function InputSearch({ onClick }: Props)  {
   return(
     <Container maxW="700px" px="20px" mb="30px">
       <InputGroup mt="-30px">

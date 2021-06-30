@@ -37,9 +37,10 @@ export default function Home({id, name, status, species, type, gender, origin, i
     try {
       const response = await api.get<CharacterProps>(`?name=${input}`);
 
-      const character = response.data;
+      const data = response.data;
+    
 
-      setCharacter([...characters, character]);
+      setCharacter([...characters, data]);
       setInput('');
       setInputError('');
     } catch (err) {
@@ -57,23 +58,28 @@ export default function Home({id, name, status, species, type, gender, origin, i
 
       <InputSearch onClick={() => {handleSearchCast}} />
 
-      <Text
-        color="gray.500"
-      >
-        {!!inputError}
-      </Text>
+      {inputError &&
+        <Text
+          textAlign="center"
+          color="red.500"
+          fontSize="20px"
+          fontWeight="bold"
+        >
+          {inputError}
+        </Text>
+      }
 
-      {characters.map((character) => (
+      {characters.map((data) => (
         <Card
-          key={character.id}
-          id={character.id}
-          name={character.name}
-          gender={character.gender}
-          image={character.image}
-          origin={character.origin}
-          species={character.species}
-          status={character.status}
-          type={character.type}
+          key={data.id}
+          id={data.id}
+          name={data.name}
+          gender={data.gender}
+          image={data.image}
+          origin={data.origin}
+          species={data.species}
+          status={data.status}
+          type={data.type}
         />
       ))}
     </>
