@@ -13,25 +13,18 @@ interface CharacterProps {
     name: string,
   };
   image: string;
+  onClick: () => void;
+  favoriteButton: 'addFavorites' | 'unFavorite';
 }
 
-export default function Card({id, name, status, species, type, gender, origin, image }: CharacterProps) {
-  const [addFavorites, setAddFavorites] = useState(false)
-  const toast = useToast();
+const icons = {
+  addFavorites: <AiFillHeart size={20} />,
+  unFavorite: <AiOutlineHeart size={20} />,
+}
 
-  function handleAddFavorites() {
-    setAddFavorites(!addFavorites);
-    toast({
-      description: "Adicionado a lista de favoritos",
-      status: "success",
-      position: "top-right",
-      duration: 3000,
-      isClosable: true,
-    })
-  }
-
+export default function Card({id, name, status, species, type, gender, origin, image, onClick, favoriteButton }: CharacterProps) {
   return(
-    <Container key={id} maxW="700px" px="20px" mb="15px">
+    <Container favoriteButton={favoriteButton} key={id} maxW="700px" px="20px" mb="15px">
       <Box
         w="100%"
         bgColor="white.500"
@@ -52,11 +45,11 @@ export default function Card({id, name, status, species, type, gender, origin, i
           <Stack alignItems="flex-start" direction="column" spacing="0">
             <Text color="gray.500" fontSize="25px" fontWeight="bold">{name}</Text>
             <Stack alignItems="flex-start" direction={["column", "column", "row"]} spacing={["0px", "0px", "10px"]} >
-              <Text color="gray.500" fontSize="18px" fontWeight="normal">{status}</Text>
-              <Text color="gray.500" fontSize="18px" fontWeight="normal">{species}</Text>
-              <Text color="gray.500" fontSize="18px" fontWeight="normal">{gender}</Text>
-              <Text color="gray.500" fontSize="18px" fontWeight="normal">{type}</Text>
-              <Text color="gray.500" fontSize="18px" fontWeight="normal">{origin.name}</Text>
+              <Text color="gray.500" textAlign="left" fontSize="18px" fontWeight="normal">{status}</Text>
+              <Text color="gray.500" textAlign="left" fontSize="18px" fontWeight="normal">{species}</Text>
+              <Text color="gray.500" textAlign="left" fontSize="18px" fontWeight="normal">{type}</Text>
+              <Text color="gray.500" textAlign="left" fontSize="18px" fontWeight="normal">{gender}</Text>
+              <Text color="gray.500" textAlign="left" fontSize="18px" fontWeight="normal">{origin.name}</Text>
             </Stack>
           </Stack>
         </Stack>
@@ -66,8 +59,9 @@ export default function Card({id, name, status, species, type, gender, origin, i
           colorScheme="transparent"
           _focus={{ }}
           aria-label="add favorites"
-          icon={ addFavorites ? <AiFillHeart size={20}/> : <AiOutlineHeart size={20}/> }
-          onClick={handleAddFavorites}
+          // icon={ addFavorites ? <AiFillHeart size={20}/> : <AiOutlineHeart size={20}/> }
+          icon={icons[favoriteButton]}
+          onClick={onClick}
         />
       </Box>
     </Container>

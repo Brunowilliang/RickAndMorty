@@ -34,6 +34,9 @@ const theme = extendTheme({
       500: '#706E7A',
       700: '#585666',
     },
+    orange: {
+      500: '#FF8E0E',
+    },
     red: {
       500: '#e83f5b',
     }

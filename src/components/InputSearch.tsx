@@ -1,11 +1,13 @@
 import React from 'react';
-import { Container, Button, Input, InputRightElement, InputGroup, ButtonProps } from '@chakra-ui/react'
+import { Container, Button, Input, InputRightElement, InputGroup } from '@chakra-ui/react'
 
-interface Props extends ButtonProps {
+interface Props {
   onClick: () => void;
+  onChange: (e) =>  void;
+  value: string;
 }
 
-export default function InputSearch({ onClick }: Props)  {
+export default function InputSearch({ value, onClick, onChange }: Props)  {
   return(
     <Container maxW="700px" px="20px" mb="30px">
       <InputGroup mt="-30px">
@@ -17,9 +19,11 @@ export default function InputSearch({ onClick }: Props)  {
           borderColor="transparent"
           focusBorderColor="transparent"
           color="gray.500"
-          placeholder="Enter password"
+          placeholder="Digite o nome do seu personagem"
           _hover={{ borderColor: "transparent" }}
           _placeholder={{color: "gray.500"}}
+          onChange={e => onChange(e.target.value)}
+          value={value}
           />
         <InputRightElement w="auto" h="auto">
           <Button

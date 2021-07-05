@@ -1,69 +1,91 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState, useContext } from 'react';
 import Head from 'next/head'
 
 import api from '../services/api';
 import Header from '../components/Header';
 import InputSearch from '../components/InputSearch';
 import Card from '../components/Card';
-import { Text } from '@chakra-ui/react';
-
-interface CharacterProps {
-  id: string;
-  name: string;
-  status: string;
-  species: string;
-  type: string;
-  gender: string;
-  origin: {
-    name: string,
-  };
-  image: string;
-}
-
-export default function Home({id, name, status, species, type, gender, origin, image }: CharacterProps) {
-  const [input, setInput] = useState('');
-  const [inputError, setInputError] = useState('');
-  const [characters, setCharacter] = useState<CharacterProps[]>([])
+import { Text, useToast } from '@chakra-ui/react';
+import { useCharacters } from '../context/Characters';
 
 
-  async function handleSearchCast(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+export default function Home() {
+  const toast = useToast();
+  const [addFavorites, setAddFavorites] = useState(false)
+
+  const {
+    characters, setCharacter,
+    input, setInput,
+    inputError, setInputError,
+  } = useCharacters();
+  
+  async function handleSearchCast() {
 
     if (!input) {
-      setInputError('Digite o nome do personagem');
+      setInputError('Digite o nome de algum personagem');
+      setCharacter([]);
       return;
     }
 
     try {
-      const response = await api.get<CharacterProps>(`?name=${input}`);
-
-      const data = response.data;
-    
-
-      setCharacter([...characters, data]);
+      const response = await api.get(`?name=${input}`);
+      const data = response.data.results;
+      
+      setCharacter([ ...data ]);
       setInput('');
       setInputError('');
     } catch (err) {
-      setInputError('Erro na Busca por esse personagem');
+      setInputError('Nenhum personagem encontrado');
     }
+    
   }
+
+
+  function handleAddFavorites() {
+    setAddFavorites(true)
+    toast({
+      description: "Adicionado a lista de favoritos",
+      status: "success",
+      position: "top-right",
+      duration: 3000,
+      isClosable: true,
+    })
+  }
+
+  function handleUnFavorite() {
+    setAddFavorites(false)
+    toast({
+      description: "Removido da lista de favoritos",
+      status: "error",
+      position: "top-right",
+      duration: 3000,
+      isClosable: true,
+    })
+  }
+
 
   return (
     <>
       <Head>
-        <title>Home | GoAgenda</title>
+        <title>Home | Rick And Morty </title>
       </Head>
 
-      <Header title="Explore os persongens do seriado"/>
+      <Header
+        buttonTitle="Favoritos"
+        title="Explore os persongens do seriado"
+        linkPage="/favoritos"  
+        type="favorite"
+      />
 
-      <InputSearch onClick={() => {handleSearchCast}} />
+      <InputSearch value={input} onChange={setInput} onClick={handleSearchCast} />
 
       {inputError &&
         <Text
           textAlign="center"
-          color="red.500"
+          color="orange.500"
           fontSize="20px"
           fontWeight="bold"
+          mb="30px"
         >
           {inputError}
         </Text>
@@ -71,15 +93,17 @@ export default function Home({id, name, status, species, type, gender, origin, i
 
       {characters.map((data) => (
         <Card
-          key={data.id}
+          key={`card${data.id}`}
           id={data.id}
           name={data.name}
-          gender={data.gender}
           image={data.image}
-          origin={data.origin}
-          species={data.species}
-          status={data.status}
-          type={data.type}
+          status={data.status ? data.status : "-"}
+          species={data.species ? data.species : "-"}
+          type={data.type ? data.type : "-"}
+          gender={data.gender ? data.gender : "-"}
+          origin={{ name: data.origin.name ? data.origin.name : "-" }}
+          onClick={addFavorites ? handleUnFavorite : handleAddFavorites}
+          favoriteButton={addFavorites ? 'addFavorites' : 'unFavorite'}
         />
       ))}
     </>
